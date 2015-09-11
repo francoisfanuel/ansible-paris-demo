@@ -1,0 +1,28 @@
+---
+- name: Generate security policy from Capirca & push it to the SRX firewall
+  hosts: fw-srx
+  connection: local
+  gather_facts: no
+
+  roles:
+    - Juniper.junos
+
+  tasks:
+    - name: Generate NAC Policy via Capirca
+      command: "python ../capirca/aclgen.py -d ../nac/def -p ../nac/policy/dummy_policy.pol -o ../nac/output"
+
+    - name: Local copy of conf file (for extension problems)
+      copy: src=../nac/output/policy/dummy_policy.srx dest=../nac/output/policy/dummy_policy.conf
+      delegate_to: localhost
+      changed_when: False
+
+    - name: Push configuration
+      junos_install_config:
+        host: "{{ ansible_ssh_host }}"
+        user: demo
+        passwd: demo1234
+        file: "../nac/output/policy/dummy_policy.conf"
+        overwrite: False
+        comment: "Pushed by Ansible - Default configuration"
+        logfile: "../logs/push_srx_default_configuration.log"
+        diffs_file: "../logs/push_srx_default_configuration.diff"

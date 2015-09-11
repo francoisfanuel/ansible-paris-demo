@@ -1,0 +1,14 @@
+---
+- name: Push default configuration to IPTables Firewall
+  hosts: fw-iptables
+
+  tasks:
+    - name: Local copy of conf file (for extension problems)
+      copy: src=../files/iptables_default.rules dest=/etc/iptables.rules
+      become: yes
+      become_method: sudo
+
+    - name: Push configuration
+      shell: "iptables-restore < /etc/iptables.rules"
+      become: yes
+      become_method: sudo

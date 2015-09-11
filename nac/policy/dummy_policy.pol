@@ -1,0 +1,26 @@
+##
+# Dummy network security policy for demo
+
+header {
+  comment:: "subnet-a to subnet-b"
+  target:: srx from-zone subnet-a to-zone subnet-b
+  target:: speedway FORWARD
+}
+
+term ping_server-a_server-b {
+  source-address:: SERVER_A
+  destination-address:: SERVER_B
+  protocol:: icmp
+  action:: accept
+}
+
+term ping_server-b_server-a {
+  source-address:: SERVER_B
+  destination-address:: SERVER_A
+  protocol:: icmp
+  action:: accept
+}
+
+term default-deny {
+  action:: deny
+}

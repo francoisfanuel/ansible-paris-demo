@@ -1,0 +1,20 @@
+---
+- name: Push default configuration to SRX Firewall
+  hosts: fw-srx
+  connection: local
+  gather_facts: no
+
+  roles:
+    - Juniper.junos
+
+  tasks:
+    - name: Push configuration
+      junos_install_config:
+        host: "{{ ansible_ssh_host }}"
+        user: demo
+        passwd: demo1234
+        file: "../files/srx_default.conf"
+        overwrite: true
+        comment: "Pushed by Ansible - Default configuration"
+        logfile: "../logs/push_srx_default_configuration.log"
+        diffs_file: "../logs/push_srx_default_configuration.diff"

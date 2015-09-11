@@ -1,0 +1,18 @@
+---
+- name: Generate security policy from Capirca & push it to the IPTables firewall
+  hosts: fw-iptables
+
+  tasks:
+    - name: Generate NAC Policy via Capirca
+      command: "python ../capirca/aclgen.py -d ../nac/def -p ../nac/policy/dummy_policy.pol -o ../nac/output"
+      delegate_to: localhost
+
+    - name: Local copy of conf file (for extension problems)
+      copy: src=../nac/output/policy/dummy_policy.ipt dest=/etc/iptables.rules
+      become: yes
+      become_method: sudo
+
+    - name: Push configuration
+      shell: "iptables-restore < /etc/iptables.rules"
+      become: yes
+      become_method: sudo

@@ -1,0 +1,6 @@
+*filter
+:FORWARD DROP
+-N F_default-deny
+-A F_default-deny -p all -j DROP
+-A FORWARD -j F_default-deny
+COMMIT
